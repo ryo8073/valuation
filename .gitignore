@@ -1,0 +1,13 @@
+# Reference materials
+reference_materials/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor specific
+.vscode/
+.idea/
+.cursor-rules/
+*.swp
+*.swo 
