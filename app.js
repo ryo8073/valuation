@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             state.questionSet = flowchartQuestions;
             state.currentQuestionId = 'FQ1';
         }
+        // Calculate total questions dynamically based on the question set
         state.totalQuestions = Object.keys(state.questionSet).length;
         
         startScreen.classList.add('hidden');
@@ -131,7 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
             state.currentQuestionId = id;
             updateProgress();
             
-            questionText.textContent = question.text;
+            // Add dynamic question numbering for guided path
+            let displayText = question.text;
+            if (state.quizType === 'guided') {
+                const questionNumber = getQuestionNumber(id);
+                displayText = `${questionNumber} ${question.text}`;
+            }
+            
+            questionText.textContent = displayText;
             
             questionHelpContainer.innerHTML = '';
             if (question.help) {
@@ -326,6 +334,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function hideHelp() {
         helpModal.classList.add('hidden');
         appContainer.setAttribute('aria-hidden', 'false');
+    }
+
+    // Helper function to get question number for guided path
+    function getQuestionNumber(questionId) {
+        const questionOrder = ['Q1', 'Q1_5', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q6_5', 'Q7', 'Q8', 'Q9'];
+        const index = questionOrder.indexOf(questionId);
+        return index !== -1 ? `Q${index + 1}.` : '';
     }
 
     // Event Listeners

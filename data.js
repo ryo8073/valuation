@@ -1,6 +1,6 @@
 export const questions = {
     'Q1': {
-        text: 'Q1. あなたが株式を取得する会社は、議決権の30%以上を保有する「同族株主グループ」が存在する会社ですか？',
+        text: 'あなたが株式を取得する会社は、議決権の30%以上を保有する「同族株主グループ」が存在する会社ですか？',
         help: {
             title: '同族株主グループとは？',
             text: '会社の議決権の30%以上を保有する株主とその親族（6親等内の血族、3親等内の姻族など）からなるグループのことです。'
@@ -9,10 +9,22 @@ export const questions = {
             { text: 'はい', value: true },
             { text: 'いいえ', value: false }
         ],
-        next: (answer) => answer ? 'Q2' : null // If no group, they can't be a controlling member. Simplified logic leads to dividend reduction.
+        next: (answer) => answer ? 'Q2' : 'Q1_5' // If no group, check if user is in 15-30% group
+    },
+    'Q1_5': {
+        text: 'あなたは、議決権の15%以上30%未満を保有する「同族株主等」に該当しますか？',
+        help: {
+            title: '同族株主等とは？',
+            text: '議決権総数の15%以上、30%未満であるグループの株主を指します。'
+        },
+        options: [
+            { text: 'はい', value: true },
+            { text: 'いいえ', value: false }
+        ],
+        next: (answer) => answer ? 'Q4' : null // If yes, go to officer question; if no, end with dividend method
     },
     'Q2': {
-        text: 'Q2. その会社には「中心的な同族株主」がいますか？',
+        text: 'その会社には「中心的な同族株主」がいますか？',
         help: {
             title: '中心的な同族株主とは？',
             text: '同族株主の一人とその配偶者、親子、兄弟姉妹などが保有する議決権の合計が25%以上になる場合の、その株主を指します。'
@@ -24,7 +36,7 @@ export const questions = {
         next: (answer) => answer ? 'Q3' : 'Q4'
     },
     'Q3': {
-        text: 'Q3. あなた自身は、その「中心的な同族株主」に該当しますか？',
+        text: 'あなた自身は、その「中心的な同族株主」に該当しますか？',
         help: {
             title: '中心的な同族株主への該当',
             text: 'あなた自身とあなたの近親者（配偶者、親子、兄弟姉妹など）の議決権を合計して25%以上になるかをご確認ください。'
@@ -36,7 +48,7 @@ export const questions = {
         next: () => 'Q4'
     },
     'Q4': {
-        text: 'Q4. あなたは、株式を取得する会社の役員ですか？',
+        text: 'あなたは、株式を取得する会社の役員ですか？',
         help: {
             title: '役員とは？',
             text: '会社の経営に直接関与している取締役、監査役などが該当します。'
@@ -48,7 +60,7 @@ export const questions = {
         next: () => 'Q5'
     },
     'Q5': {
-        text: 'Q5. 今回の株式取得によって、あなたの議決権割合は5%以上になりますか？',
+        text: '今回の株式取得によって、あなたの議決権割合は5%以上になりますか？',
         help: {
             title: '取得後の議決権割合',
             text: '今回取得する株式と、もともと保有している株式を合算した議決権の割合です。'
@@ -63,7 +75,7 @@ export const questions = {
         }
     },
     'Q6': {
-        text: 'Q6. 会社は「特定の評価会社」に該当しますか？（開業3年未満、休業中、土地・株式の保有割合が高いなど）',
+        text: '会社は「特定の評価会社」に該当しますか？（開業3年未満、休業中、土地・株式の保有割合が高いなど）',
         help: {
             title: '特定の評価会社とは？',
             text: '土地保有特定会社、株式保有特定会社、開業3年未満の会社、比準要素が1つ以下の会社などが該当します。\n詳細は国税庁のウェブサイト等でご確認ください。'
@@ -75,7 +87,7 @@ export const questions = {
         next: (answer) => answer ? null : 'Q6_5' // 'はい' leads to pure net asset method
     },
     'Q6_5': {
-        text: 'Q. 会社の業種はどれに該当しますか？',
+        text: '会社の業種はどれに該当しますか？',
         options: [
             { text: '卸売業', value: 'wholesale' },
             { text: '小売・サービス業', value: 'retail_service' },
@@ -84,7 +96,7 @@ export const questions = {
         next: () => 'Q7'
     },
     'Q7': {
-        text: 'Q7. 会社の従業員数（役員を除く、継続勤務する者）は何人ですか？',
+        text: '会社の従業員数（役員を除く、継続勤務する者）は何人ですか？',
         help: {
             title: '従業員数の計算方法',
             text: '正社員のほか、パート・アルバイトは年間の労働時間数を1,800で割って1人として換算します。'
@@ -97,7 +109,7 @@ export const questions = {
         next: () => 'Q8'
     },
     'Q8': {
-        text: 'Q8. 直前期末の総資産価額（帳簿価額）はいくらですか？',
+        text: '直前期末の総資産価額（帳簿価額）はいくらですか？',
         help: {
             title: '総資産価額',
             text: '貸借対照表の資産合計額です。'
@@ -110,7 +122,7 @@ export const questions = {
         next: () => 'Q9'
     },
     'Q9': {
-        text: 'Q9. 直前期の取引金額（売上高）はいくらですか？',
+        text: '直前期の取引金額（売上高）はいくらですか？',
         help: {
             title: '取引金額',
             text: '損益計算書の売上高です。'
