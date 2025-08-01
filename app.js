@@ -370,6 +370,97 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         
         positionText.textContent = positionMap[questionId] || 'フローチャート進行中';
+        
+        // Update flowchart highlighting
+        updateFlowchartHighlighting(questionId);
+        updatePathDisplay();
+    }
+
+    // Helper function to highlight current step in flowchart
+    function updateFlowchartHighlighting(questionId) {
+        // Remove all highlights first
+        document.querySelectorAll('.flowchart-step').forEach(step => {
+            step.querySelector('div').classList.remove('border-blue-500', 'bg-blue-50');
+            step.querySelector('div').classList.add('border-slate-300', 'bg-slate-100');
+        });
+        
+        document.querySelectorAll('.flowchart-option').forEach(option => {
+            option.classList.remove('text-blue-700', 'font-semibold');
+            option.classList.add('text-slate-600');
+        });
+        
+        // Highlight current step
+        const currentStep = document.querySelector(`[data-step="${questionId}"]`);
+        if (currentStep) {
+            currentStep.querySelector('div').classList.remove('border-slate-300', 'bg-slate-100');
+            currentStep.querySelector('div').classList.add('border-blue-500', 'bg-blue-50');
+        }
+        
+        // Highlight selected options based on answers
+        highlightSelectedOptions();
+    }
+
+    // Helper function to highlight selected options
+    function highlightSelectedOptions() {
+        Object.entries(state.answers).forEach(([questionId, answer]) => {
+            const step = document.querySelector(`[data-step="${questionId}"]`);
+            if (step) {
+                const option = step.querySelector(`[data-option="${answer.answer}"]`);
+                if (option) {
+                    option.classList.remove('text-slate-600');
+                    option.classList.add('text-blue-700', 'font-semibold');
+                }
+            }
+        });
+    }
+
+    // Helper function to update path display
+    function updatePathDisplay() {
+        const pathDisplay = document.getElementById('path-display');
+        const pathSteps = [];
+        
+        // Build path based on answers
+        if (state.answers['FQ1']) {
+            const answer = state.answers['FQ1'].answer;
+            if (answer === 'over_50') pathSteps.push('50%超');
+            else if (answer === '30_to_50') pathSteps.push('30%以上50%以下');
+            else if (answer === 'under_30') pathSteps.push('30%未満');
+        }
+        
+        if (state.answers['FQ2_A'] || state.answers['FQ2_B'] || state.answers['FQ2_C']) {
+            const answer = state.answers['FQ2_A']?.answer || state.answers['FQ2_B']?.answer || state.answers['FQ2_C']?.answer;
+            if (answer === 'family') pathSteps.push('同族株主');
+            else if (answer === 'family_etc') pathSteps.push('同族株主等');
+            else if (answer === 'other') pathSteps.push('同族株主以外');
+        }
+        
+        if (state.answers['FQ3_A']) {
+            const answer = state.answers['FQ3_A'].answer;
+            pathSteps.push(answer ? '5%以上' : '5%未満');
+        }
+        
+        if (state.answers['FQ4_A']) {
+            const answer = state.answers['FQ4_A'].answer;
+            pathSteps.push(answer ? '中心的な同族株主がいる' : '中心的な同族株主がいない');
+        }
+        
+        if (state.answers['FQ5_A']) {
+            const answer = state.answers['FQ5_A'].answer;
+            pathSteps.push(answer ? '中心的な同族株主に該当' : '中心的な同族株主に該当しない');
+        }
+        
+        if (state.answers['FQ6'] || state.answers['FQ4_B'] || state.answers['FQ5_B']) {
+            const answer = state.answers['FQ6']?.answer || state.answers['FQ4_B']?.answer || state.answers['FQ5_B']?.answer;
+            pathSteps.push(answer ? '役員である' : '役員でない');
+        }
+        
+        if (pathSteps.length > 0) {
+            pathDisplay.innerHTML = pathSteps.map((step, index) => 
+                `<span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 mb-1">${index + 1}. ${step}</span>`
+            ).join('');
+        } else {
+            pathDisplay.innerHTML = '<span class="text-slate-500">まだ選択されていません</span>';
+        }
     }
 
     // Event Listeners
