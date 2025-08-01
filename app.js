@@ -132,6 +132,15 @@ document.addEventListener('DOMContentLoaded', () => {
             state.currentQuestionId = id;
             updateProgress();
             
+            // Show/hide flowchart visualization
+            const flowchartViz = document.getElementById('flowchart-visualization');
+            if (state.quizType === 'flowchart') {
+                flowchartViz.classList.remove('hidden');
+                updateFlowchartPosition(id);
+            } else {
+                flowchartViz.classList.add('hidden');
+            }
+            
             // Add dynamic question numbering for guided path
             let displayText = question.text;
             if (state.quizType === 'guided') {
@@ -341,6 +350,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const questionOrder = ['Q1', 'Q1_5', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q6_5', 'Q7', 'Q8', 'Q9'];
         const index = questionOrder.indexOf(questionId);
         return index !== -1 ? `Q${index + 1}.` : '';
+    }
+
+    // Helper function to update flowchart position text
+    function updateFlowchartPosition(questionId) {
+        const positionText = document.getElementById('flowchart-position');
+        const positionMap = {
+            'FQ1': '筆頭株主グループの議決権割合を確認中',
+            'FQ2_A': '50%超の場合：あなたの株主区分を確認中',
+            'FQ2_B': '30%以上50%以下の場合：あなたの株主区分を確認中',
+            'FQ2_C': '30%未満の場合：あなたの株主区分を確認中',
+            'FQ3_A': '同族株主の場合：取得後の議決権割合を確認中',
+            'FQ3_B': '同族株主以外の場合：特例的評価方式が適用されます',
+            'FQ4_A': '5%以上の場合：中心的な同族株主の有無を確認中',
+            'FQ4_B': '5%未満の場合：役員の有無を確認中',
+            'FQ5_A': '中心的な同族株主がいる場合：あなたの該当性を確認中',
+            'FQ5_B': '中心的な同族株主がいない場合：役員の有無を確認中',
+            'FQ6': '中心的な同族株主に該当する場合：役員の有無を確認中'
+        };
+        
+        positionText.textContent = positionMap[questionId] || 'フローチャート進行中';
     }
 
     // Event Listeners

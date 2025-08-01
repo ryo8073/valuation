@@ -26,7 +26,7 @@
                         </button>
                         <button id="start-flowchart-btn" class="flex-1 p-6 bg-white border-2 border-slate-200 rounded-lg text-left hover:border-blue-500 hover:bg-blue-50 transition-all transform hover:-translate-y-1">
                             <h2 class="text-xl font-bold text-slate-800">フローチャート形式</h2>
-                            <p class="mt-2 text-slate-600">お手元のフローチャートに沿って、ご自身で確認しながら評価方式を判定します。</p>
+                            <p class="mt-2 text-slate-600">フローチャートに沿って、現在位置を確認しながら評価方式を判定します。</p>
                         </button>
                     </div>
                 </div>
@@ -50,6 +50,14 @@
 
             <!-- Quiz Screen -->
             <div id="quiz-screen" class="hidden">
+                <!-- Flowchart Visualization (only shown for flowchart quiz) -->
+                <div id="flowchart-visualization" class="hidden mb-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h3 class="text-sm font-semibold text-blue-800 mb-2">フローチャート位置</h3>
+                        <div id="flowchart-position" class="text-sm text-blue-700"></div>
+                    </div>
+                </div>
+                
                 <div class="relative pt-1">
                     <div class="flex mb-2 items-center justify-between">
                         <div>

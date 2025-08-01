@@ -156,6 +156,10 @@ export const flowchartQuestions = {
     },
     'FQ2_A': { // Path for >50%
         text: 'あなた（納税義務者）は同族株主ですか、それとも同族株主以外の株主ですか？',
+        help: {
+            title: '同族株主とは？',
+            text: '議決権総数の30%以上を保有する株主グループの構成員を指します。'
+        },
         options: [
             { text: '同族株主', value: 'family' },
             { text: '同族株主以外の株主', value: 'other' }
@@ -164,6 +168,10 @@ export const flowchartQuestions = {
     },
     'FQ2_B': { // Path for 30%-50%
         text: 'あなた（納税義務者）は同族株主ですか、それとも同族株主以外の株主ですか？',
+        help: {
+            title: '同族株主とは？',
+            text: '議決権総数の30%以上を保有する株主グループの構成員を指します。'
+        },
         options: [
             { text: '同族株主', value: 'family' },
             { text: '同族株主以外の株主', value: 'other' }
@@ -184,6 +192,10 @@ export const flowchartQuestions = {
     },
     'FQ3_A': { // Path for all "family" types
         text: '取得後のあなたの議決権割合は5%以上ですか？',
+        help: {
+            title: '取得後の議決権割合',
+            text: '今回取得する株式と、もともと保有している株式を合算した議決権の割合です。'
+        },
         options: [
             { text: 'はい（5%以上）', value: true },
             { text: 'いいえ（5%未満）', value: false }
@@ -192,7 +204,13 @@ export const flowchartQuestions = {
     },
     'FQ3_B': { // Path for all "other" types -> leads to Special method
         text: 'これで診断は完了です。',
-        options: [],
+        help: {
+            title: '診断完了',
+            text: '同族株主以外の株主の場合、特例的評価方式（配当還元方式）が適用されます。'
+        },
+        options: [
+            { text: '結果を確認する', value: 'confirm' }
+        ],
         next: () => null,
         result: '配当還元方式'
     },
@@ -210,6 +228,10 @@ export const flowchartQuestions = {
     },
     'FQ4_B': { // Path for <5%
         text: 'あなた（納税義務者）は役員ですか？',
+        help: {
+            title: '役員とは？',
+            text: '会社の経営に直接関与している取締役、監査役などが該当します。'
+        },
         options: [
             { text: 'はい', value: true },
             { text: 'いいえ', value: false }
@@ -219,6 +241,10 @@ export const flowchartQuestions = {
     },
     'FQ5_A': { // Path for "いる"
         text: 'あなた自身は、その中心的な同族株主に該当しますか？',
+        help: {
+            title: '中心的な同族株主への該当',
+            text: 'あなた自身とあなたの近親者（配偶者、親子、兄弟姉妹など）の議決権を合計して25%以上になるかをご確認ください。'
+        },
         options: [
             { text: 'はい', value: true },
             { text: 'いいえ', value: false }
@@ -227,6 +253,10 @@ export const flowchartQuestions = {
     },
     'FQ5_B': { // Path for "いない"
         text: 'あなた（納税義務者）は役員ですか？',
+        help: {
+            title: '役員とは？',
+            text: '会社の経営に直接関与している取締役、監査役などが該当します。'
+        },
         options: [
             { text: 'はい', value: true },
             { text: 'いいえ', value: false }
@@ -236,6 +266,10 @@ export const flowchartQuestions = {
     },
     'FQ6': { // Final question for "Principle" path
         text: 'あなた（納税義務者）は役員ですか？',
+        help: {
+            title: '役員とは？',
+            text: '会社の経営に直接関与している取締役、監査役などが該当します。'
+        },
         options: [
             { text: 'はい', value: true },
             { text: 'いいえ', value: false }
