@@ -12,32 +12,12 @@
 
     <div id="app-container" class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
         <div class="p-8 md:p-12">
-            <!-- Choice Screen -->
-            <div id="choice-screen">
-                <div class="text-center">
-                    <h1 class="text-3xl md:text-4xl font-bold text-slate-900">評価方式を選んでください</h1>
-                    <p class="mt-4 text-slate-600 max-w-2xl mx-auto">
-                        ご自身の状況に合わせて、2つの診断方法からお好きな方をお選びいただけます。
-                    </p>
-                    <div class="mt-8 flex flex-col md:flex-row gap-6 justify-center">
-                        <button id="start-guided-btn" class="flex-1 p-6 bg-white border-2 border-slate-200 rounded-lg text-left hover:border-blue-500 hover:bg-blue-50 transition-all transform hover:-translate-y-1">
-                            <h2 class="text-xl font-bold text-slate-800">かんたん質問形式</h2>
-                            <p class="mt-2 text-slate-600">いくつかの質問に答えるだけで、あなたのケースに合った評価方式を自動で判定します。</p>
-                        </button>
-                        <button id="start-flowchart-btn" class="flex-1 p-6 bg-white border-2 border-slate-200 rounded-lg text-left hover:border-blue-500 hover:bg-blue-50 transition-all transform hover:-translate-y-1">
-                            <h2 class="text-xl font-bold text-slate-800">フローチャート形式</h2>
-                            <p class="mt-2 text-slate-600">フローチャートに沿って、現在位置を確認しながら評価方式を判定します。</p>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Start Screen -->
-            <div id="start-screen" class="hidden">
+            <div id="start-screen">
                 <div class="text-center">
                     <h1 class="text-3xl md:text-4xl font-bold text-slate-900">未上場株式 評価方式かんたん診断</h1>
                     <p class="mt-4 text-slate-600 max-w-2xl mx-auto">
-                        いくつかの簡単な質問に答えるだけで、あなたのケースに適用される相続税評価の方式を診断します。
+                        フローチャートに沿って、現在位置を確認しながら評価方式を判定します。
                     </p>
                     <button id="start-btn" class="mt-8 px-10 py-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-transform transform hover:scale-105">
                         診断を開始する
@@ -76,7 +56,7 @@
                 </div>
                 
                 <!-- Flowchart Visualization (moved below question section) -->
-                <div id="flowchart-visualization" class="hidden mt-8">
+                <div id="flowchart-visualization" class="mt-8">
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <h3 class="text-sm font-semibold text-blue-800 mb-4">フローチャート位置</h3>
                         <div id="flowchart-position" class="text-sm text-blue-700 mb-4"></div>
@@ -136,7 +116,7 @@
                                 
                                 <!-- Row 3: Step 3 variants -->
                                 <div class="flex justify-center space-x-4">
-                                    <div class="flowchart-step" data-step="FQ3_A" data-path="over_50_family">
+                                    <div class="flowchart-step" data-step="FQ3" data-path="over_50_family">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
                                             <h4 class="font-semibold text-xs text-slate-700 mb-1">3. 取得後議決権</h4>
                                             <div class="space-y-1 text-xs">
@@ -145,7 +125,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flowchart-step" data-step="FQ3_A" data-path="30_to_50_family">
+                                    <div class="flowchart-step" data-step="FQ3" data-path="30_to_50_family">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
                                             <h4 class="font-semibold text-xs text-slate-700 mb-1">3. 取得後議決権</h4>
                                             <div class="space-y-1 text-xs">
@@ -154,7 +134,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flowchart-step" data-step="FQ3_A" data-path="under_30_family_etc">
+                                    <div class="flowchart-step" data-step="FQ3" data-path="under_30_family_etc">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
                                             <h4 class="font-semibold text-xs text-slate-700 mb-1">3. 取得後議決権</h4>
                                             <div class="space-y-1 text-xs">
@@ -168,54 +148,27 @@
                                 <!-- Arrow down -->
                                 <div class="text-blue-600 text-lg">↓</div>
                                 
-                                <!-- Row 4: Step 4 variants -->
+                                <!-- Row 4: Step 4 variants (only for <5%) -->
                                 <div class="flex justify-center space-x-4">
-                                    <div class="flowchart-step" data-step="FQ4_A" data-path="over_50_family_5plus">
+                                    <div class="flowchart-step" data-step="FQ4" data-path="over_50_family_5minus">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">4. 中心的な株主</h4>
+                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">4. 中心的な同族株主</h4>
                                             <div class="space-y-1 text-xs">
                                                 <div class="flowchart-option" data-option="true">• いる</div>
                                                 <div class="flowchart-option" data-option="false">• いない</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flowchart-step" data-step="FQ4_A" data-path="30_to_50_family_5plus">
+                                    <div class="flowchart-step" data-step="FQ4" data-path="30_to_50_family_5minus">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">4. 中心的な株主</h4>
+                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">4. 中心的な同族株主</h4>
                                             <div class="space-y-1 text-xs">
                                                 <div class="flowchart-option" data-option="true">• いる</div>
                                                 <div class="flowchart-option" data-option="false">• いない</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flowchart-step" data-step="FQ4_A" data-path="under_30_family_etc_5plus">
-                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">4. 中心的な株主</h4>
-                                            <div class="space-y-1 text-xs">
-                                                <div class="flowchart-option" data-option="true">• いる</div>
-                                                <div class="flowchart-option" data-option="false">• いない</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flowchart-step" data-step="FQ4_B" data-path="over_50_family_5minus">
-                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">4. 中心的な株主</h4>
-                                            <div class="space-y-1 text-xs">
-                                                <div class="flowchart-option" data-option="true">• いる</div>
-                                                <div class="flowchart-option" data-option="false">• いない</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flowchart-step" data-step="FQ4_B" data-path="30_to_50_family_5minus">
-                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">4. 中心的な株主</h4>
-                                            <div class="space-y-1 text-xs">
-                                                <div class="flowchart-option" data-option="true">• いる</div>
-                                                <div class="flowchart-option" data-option="false">• いない</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flowchart-step" data-step="FQ4_B" data-path="under_30_family_etc_5minus">
+                                    <div class="flowchart-step" data-step="FQ4" data-path="under_30_family_etc_5minus">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
                                             <h4 class="font-semibold text-xs text-slate-700 mb-1">4. 中心的な株主</h4>
                                             <div class="space-y-1 text-xs">
@@ -231,54 +184,18 @@
                                 
                                 <!-- Row 5: Step 5 variants -->
                                 <div class="flex justify-center space-x-4">
-                                    <div class="flowchart-step" data-step="FQ5_A" data-path="over_50_family_5plus_central_yes">
+                                    <div class="flowchart-step" data-step="FQ5" data-path="over_50_family_5minus_central_yes">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">5. 中心的な株主への該当</h4>
+                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">5. 中心的な同族株主への該当</h4>
                                             <div class="space-y-1 text-xs">
                                                 <div class="flowchart-option" data-option="true">• する</div>
                                                 <div class="flowchart-option" data-option="false">• しない</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flowchart-step" data-step="FQ5_A" data-path="30_to_50_family_5plus_central_yes">
+                                    <div class="flowchart-step" data-step="FQ5" data-path="30_to_50_family_5minus_central_yes">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">5. 中心的な株主への該当</h4>
-                                            <div class="space-y-1 text-xs">
-                                                <div class="flowchart-option" data-option="true">• する</div>
-                                                <div class="flowchart-option" data-option="false">• しない</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flowchart-step" data-step="FQ5_A" data-path="under_30_family_etc_5plus_central_yes">
-                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">5. 中心的な株主への該当</h4>
-                                            <div class="space-y-1 text-xs">
-                                                <div class="flowchart-option" data-option="true">• する</div>
-                                                <div class="flowchart-option" data-option="false">• しない</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flowchart-step" data-step="FQ5_B" data-path="over_50_family_5minus_central_yes">
-                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">5. 中心的な株主への該当</h4>
-                                            <div class="space-y-1 text-xs">
-                                                <div class="flowchart-option" data-option="true">• する</div>
-                                                <div class="flowchart-option" data-option="false">• しない</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flowchart-step" data-step="FQ5_B" data-path="30_to_50_family_5minus_central_yes">
-                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">5. 中心的な株主への該当</h4>
-                                            <div class="space-y-1 text-xs">
-                                                <div class="flowchart-option" data-option="true">• する</div>
-                                                <div class="flowchart-option" data-option="false">• しない</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flowchart-step" data-step="FQ5_B" data-path="under_30_family_etc_5minus_central_yes">
-                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
-                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">5. 中心的な株主への該当</h4>
+                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">5. 中心的な同族株主への該当</h4>
                                             <div class="space-y-1 text-xs">
                                                 <div class="flowchart-option" data-option="true">• する</div>
                                                 <div class="flowchart-option" data-option="false">• しない</div>
@@ -292,7 +209,7 @@
                                 
                                 <!-- Row 6: Step 6 variants -->
                                 <div class="flex justify-center space-x-4">
-                                    <div class="flowchart-step" data-step="FQ6" data-path="over_50_family_5plus_central_yes_yes">
+                                    <div class="flowchart-step" data-step="FQ6" data-path="over_50_family_5minus_central_no">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
                                             <h4 class="font-semibold text-xs text-slate-700 mb-1">6. 役員の有無</h4>
                                             <div class="space-y-1 text-xs">
@@ -301,7 +218,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flowchart-step" data-step="FQ6" data-path="30_to_50_family_5plus_central_yes_yes">
+                                    <div class="flowchart-step" data-step="FQ6" data-path="30_to_50_family_5minus_central_no">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
                                             <h4 class="font-semibold text-xs text-slate-700 mb-1">6. 役員の有無</h4>
                                             <div class="space-y-1 text-xs">
@@ -310,7 +227,25 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flowchart-step" data-step="FQ6" data-path="under_30_family_etc_5plus_central_yes_yes">
+                                    <div class="flowchart-step" data-step="FQ6" data-path="under_30_family_etc_5minus_central_yes">
+                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
+                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">6. 役員の有無</h4>
+                                            <div class="space-y-1 text-xs">
+                                                <div class="flowchart-option" data-option="true">• である</div>
+                                                <div class="flowchart-option" data-option="false">• でない</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flowchart-step" data-step="FQ6" data-path="over_50_family_5minus_central_yes_no">
+                                        <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
+                                            <h4 class="font-semibold text-xs text-slate-700 mb-1">6. 役員の有無</h4>
+                                            <div class="space-y-1 text-xs">
+                                                <div class="flowchart-option" data-option="true">• である</div>
+                                                <div class="flowchart-option" data-option="false">• でない</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flowchart-step" data-step="FQ6" data-path="30_to_50_family_5minus_central_yes_no">
                                         <div class="bg-slate-100 rounded-lg p-2 border-2 border-slate-300 min-w-[120px] text-center">
                                             <h4 class="font-semibold text-xs text-slate-700 mb-1">6. 役員の有無</h4>
                                             <div class="space-y-1 text-xs">
@@ -326,7 +261,7 @@
                 </div>
                 
                 <!-- Current Path Display (moved to bottom) -->
-                <div id="current-path" class="hidden mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div id="current-path" class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <h4 class="font-semibold text-sm text-blue-800 mb-3">現在の選択経路</h4>
                     <div id="path-display" class="flex flex-wrap gap-2 text-sm text-blue-700"></div>
                 </div>
@@ -380,6 +315,14 @@
                 閉じる
             </button>
         </div>
+    </div>
+
+    <!-- Simple Questionnaire Link -->
+    <div class="fixed bottom-4 right-4">
+        <a href="guided-questionnaire.html" class="inline-flex items-center px-4 py-2 bg-slate-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-slate-700 transition-colors">
+            <i data-lucide="help-circle" class="w-4 h-4 mr-2"></i>
+            簡単質問形式
+        </a>
     </div>
 
     <script type="module" src="app.js"></script>

@@ -164,7 +164,7 @@ export const flowchartQuestions = {
             { text: '同族株主', value: 'family' },
             { text: '同族株主以外の株主', value: 'other' }
         ],
-        next: (answer) => answer === 'family' ? 'FQ3_A' : 'FQ3_B'
+        next: (answer) => answer === 'family' ? 'FQ3' : 'FQ3_B'
     },
     'FQ2_B': { // Path for 30%-50%
         text: 'あなた（納税義務者）は同族株主ですか、それとも同族株主以外の株主ですか？',
@@ -176,7 +176,7 @@ export const flowchartQuestions = {
             { text: '同族株主', value: 'family' },
             { text: '同族株主以外の株主', value: 'other' }
         ],
-        next: (answer) => answer === 'family' ? 'FQ3_A' : 'FQ3_B'
+        next: (answer) => answer === 'family' ? 'FQ3' : 'FQ3_B'
     },
     'FQ2_C': { // Path for <30%
         text: 'あなた（納税義務者）は同族株主等ですか、それとも同族株主等以外の株主ですか？',
@@ -188,9 +188,9 @@ export const flowchartQuestions = {
             { text: '同族株主等', value: 'family_etc' },
             { text: '同族株主等以外の株主', value: 'other' }
         ],
-        next: (answer) => answer === 'family_etc' ? 'FQ3_A' : 'FQ3_B'
+        next: (answer) => answer === 'family_etc' ? 'FQ3' : 'FQ3_B'
     },
-    'FQ3_A': { // Path for all "family" types
+    'FQ3': { // Common question for all family types
         text: '取得後のあなたの議決権割合は5%以上ですか？',
         help: {
             title: '取得後の議決権割合',
@@ -200,7 +200,8 @@ export const flowchartQuestions = {
             { text: 'はい（5%以上）', value: true },
             { text: 'いいえ（5%未満）', value: false }
         ],
-        next: (answer) => answer ? 'FQ4_A' : 'FQ4_B'
+        next: (answer) => answer ? null : 'FQ4', // 5%以上 → 原則的評価方式、5%未満 → 次の質問
+        result: (answer) => answer ? '原則的評価' : null // 5%以上の場合の結果
     },
     'FQ3_B': { // Path for all "other" types -> leads to Special method
         text: 'これで診断は完了です。',
@@ -214,53 +215,41 @@ export const flowchartQuestions = {
         next: () => null,
         result: '配当還元方式'
     },
-    'FQ4_A': { // Path for >=5%
-        text: '同族株主の中に中心的な株主がいますか？',
+    'FQ4': { // Path for <5% - 中心的な同族株主/株主の有無
+        text: '同族株主の中に中心的な同族株主（株主）がいますか？',
         help: {
-            title: '中心的な株主とは？',
+            title: '中心的な同族株主（株主）とは？',
             text: '同族株主の1人とその親族等の議決権合計が25%以上となる場合の、その株主を指します。'
         },
         options: [
             { text: 'いる', value: true },
             { text: 'いない', value: false }
         ],
-        next: (answer) => answer ? 'FQ5_A' : 'FQ6' // If yes, check if taxpayer is central; if no, go to officer question
+        next: (answer, answers) => {
+            if (!answer) return 'FQ6'; // いない場合 → 原則的評価方式
+            
+            // いる場合、1番の問題（FQ1）の答えによって分岐
+            const initialVotingRights = answers['FQ1']?.answer;
+            if (initialVotingRights === 'over_50' || initialVotingRights === '30_to_50') {
+                return 'FQ5'; // 50%超または30-50% → 中心的な同族株主への該当
+            } else if (initialVotingRights === 'under_30') {
+                return 'FQ6'; // 30%未満 → 役員の有無
+            }
+            return 'FQ6';
+        }
     },
-    'FQ4_B': { // Path for <5%
-        text: '同族株主の中に中心的な株主がいますか？',
+    'FQ5': { // Path for "いる" - 中心的な同族株主への該当
+        text: 'あなた自身は、その中心的な同族株主に該当しますか？',
         help: {
-            title: '中心的な株主とは？',
-            text: '同族株主の1人とその親族等の議決権合計が25%以上となる場合の、その株主を指します。'
-        },
-        options: [
-            { text: 'いる', value: true },
-            { text: 'いない', value: false }
-        ],
-        next: (answer) => answer ? 'FQ5_B' : 'FQ6' // If yes, check if taxpayer is central; if no, go to officer question
-    },
-    'FQ5_A': { // Path for "いる" (>=5%)
-        text: 'あなた自身は、その中心的な株主に該当しますか？',
-        help: {
-            title: '中心的な株主への該当',
+            title: '中心的な同族株主への該当',
             text: 'あなた自身とあなたの近親者（配偶者、親子、兄弟姉妹など）の議決権を合計して25%以上になるかをご確認ください。'
         },
         options: [
             { text: 'はい', value: true },
             { text: 'いいえ', value: false }
         ],
-        next: (answer) => answer ? 'FQ6' : 'FQ6' // Both paths lead to officer question
-    },
-    'FQ5_B': { // Path for "いる" (<5%)
-        text: 'あなた自身は、その中心的な株主に該当しますか？',
-        help: {
-            title: '中心的な株主への該当',
-            text: 'あなた自身とあなたの近親者（配偶者、親子、兄弟姉妹など）の議決権を合計して25%以上になるかをご確認ください。'
-        },
-        options: [
-            { text: 'はい', value: true },
-            { text: 'いいえ', value: false }
-        ],
-        next: (answer) => answer ? 'FQ6' : 'FQ6' // Both paths lead to officer question
+        next: (answer) => answer ? null : 'FQ6', // する → 原則的評価方式、しない → 役員の有無
+        result: (answer) => answer ? '原則的評価' : null // する場合の結果
     },
     'FQ6': { // Final question for officer status
         text: 'あなた（納税義務者）は役員ですか？',

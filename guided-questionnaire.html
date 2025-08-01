@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡単質問形式 - 未上場株式 評価方式かんたん診断</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 flex items-center justify-center min-h-screen font-sans">
+
+    <div id="app-container" class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="p-8 md:p-12">
+            <!-- Start Screen -->
+            <div id="start-screen">
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-900">簡単質問形式</h1>
+                    <p class="mt-4 text-slate-600 max-w-2xl mx-auto">
+                        いくつかの簡単な質問に答えるだけで、あなたのケースに適用される相続税評価の方式を診断します。
+                    </p>
+                    <button id="start-btn" class="mt-8 px-10 py-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-transform transform hover:scale-105">
+                        診断を開始する
+                    </button>
+                    <p class="mt-8 text-xs text-slate-500">
+                        ※本診断は簡易的なものであり、最終的な税務判断や申告には、必ず税理士等の専門家にご相談ください。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" class="hidden">
+                <div class="relative pt-1">
+                    <div class="flex mb-2 items-center justify-between">
+                        <div>
+                            <span id="progress-text" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
+                                Step
+                            </span>
+                        </div>
+                    </div>
+                    <div id="progress-container" class="w-full bg-slate-200 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div id="question-container" class="transition-opacity duration-500 opacity-100 mt-6">
+                    <p id="question-text" class="text-xl md:text-2xl font-semibold text-slate-900 mb-2"></p>
+                    <div id="question-help-container" class="mb-6"></div>
+                    <div id="options-container" class="space-y-4">
+                        <!-- Options will be injected here -->
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-between items-center">
+                    <button id="back-btn" class="px-6 py-2 text-slate-600 font-medium rounded-lg hover:bg-slate-100 transition">
+                        戻る
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="result-screen" class="hidden">
+                <h2 class="text-2xl font-bold text-center text-slate-900 mb-4">診断結果</h2>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                    <p class="text-slate-700">あなたのケースでは、以下の評価方式が適用される可能性が高いです。</p>
+                    <p id="result-title" class="text-2xl md:text-3xl font-bold text-blue-700 mt-2"></p>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">評価方式の解説</h3>
+                    <div id="result-content" class="prose max-w-none prose-slate">
+                        <h4>概要</h4>
+                        <p id="result-summary"></p>
+                        <h4>特徴</h4>
+                        <p id="result-features"></p>
+                        <h4>注意点</h4>
+                        <p id="result-notes"></p>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold text-slate-800 border-b pb-2 mb-4">判定の根拠</h3>
+                    <ul id="answers-summary" class="list-disc list-inside space-y-2 text-slate-600">
+                        <!-- User answers summary will be injected here -->
+                    </ul>
+                </div>
+
+                <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <button id="reset-btn" class="w-full sm:w-auto px-10 py-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-transform transform hover:scale-105">
+                        もう一度診断する
+                    </button>
+                    <a href="#" class="w-full sm:w-auto text-center px-10 py-4 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition-transform transform hover:scale-105">
+                        専門家に相談する（準備中）
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div id="help-modal-content" class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md transform transition-all">
+            <h3 id="help-modal-title" class="text-lg font-bold text-slate-900 mb-2"></h3>
+            <p id="help-modal-text" class="text-slate-600"></p>
+            <button id="help-modal-close" class="mt-4 w-full px-4 py-2 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition">
+                閉じる
+            </button>
+        </div>
+    </div>
+
+    <!-- Back to Flowchart Link -->
+    <div class="fixed bottom-4 right-4">
+        <a href="index.html" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+            フローチャート形式
+        </a>
+    </div>
+
+    <script type="module" src="guided-app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html> 

@@ -1,8 +1,7 @@
-import { questions, flowchartQuestions, resultsContent } from './data.js';
+import { flowchartQuestions, resultsContent } from './data.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Screens
-    const choiceScreen = document.getElementById('choice-screen');
     const startScreen = document.getElementById('start-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const resultScreen = document.getElementById('result-screen');
@@ -31,58 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const helpModalText = document.getElementById('help-modal-text');
     const helpModalClose = document.getElementById('help-modal-close');
 
-    // New Buttons from Choice Screen
-    const startGuidedBtn = document.getElementById('start-guided-btn');
-    const startFlowchartBtn = document.getElementById('start-flowchart-btn');
-
-    const industryAssetOptions = {
-        'wholesale': [
-            { text: '20億円以上', value: 'Large' },
-            { text: '7千万円以上 20億円未満', value: 'Medium' },
-            { text: '7千万円未満', value: 'Small' }
-        ],
-        'retail_service': [
-            { text: '10億円以上', value: 'Large' },
-            { text: '4千万円以上 10億円未満', value: 'Medium' },
-            { text: '4千万円未満', value: 'Small' }
-        ],
-        'other': [
-            { text: '15億円以上', value: 'Large' },
-            { text: '5千万円以上 15億円未満', value: 'Medium' },
-            { text: '5千万円未満', value: 'Small' }
-        ]
-    };
-
-    const industryTransactionOptions = {
-        'wholesale': [
-            { text: '30億円以上', value: 'Large' },
-            { text: '2億円以上 30億円未満', value: 'Medium' },
-            { text: '2億円未満', value: 'Small' }
-        ],
-        'retail_service': [
-            { text: '20億円以上', value: 'Large' },
-            { text: '6千万円以上 20億円未満', value: 'Medium' },
-            { text: '6千万円未満', value: 'Small' }
-        ],
-        'other': [
-            { text: '25億円以上', value: 'Large' },
-            { text: '1億5千万円以上 25億円未満', value: 'Medium' },
-            { text: '1億5千万円未満', value: 'Small' }
-        ]
-    };
-
     let state = {
         currentQuestionId: null,
         answers: {},
         history: [],
         totalQuestions: 0,
-        quizType: null, // 'guided' or 'flowchart'
-        questionSet: null,
+        quizType: 'flowchart',
+        questionSet: flowchartQuestions,
     };
 
     function init() {
-        choiceScreen.classList.remove('hidden');
-        startScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
         quizScreen.classList.add('hidden');
         resultScreen.classList.add('hidden');
 
@@ -91,30 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
             answers: {},
             history: [],
             totalQuestions: 0,
-            quizType: null,
-            questionSet: null,
+            quizType: 'flowchart',
+            questionSet: flowchartQuestions,
         };
     }
     
-    function showStartScreen() {
-        choiceScreen.classList.add('hidden');
-        startScreen.classList.remove('hidden');
-    }
-
-    function startQuiz(type) {
-        state.quizType = type;
-        if (type === 'guided') {
-            state.questionSet = questions;
-            state.currentQuestionId = 'Q1';
-        } else {
-            state.questionSet = flowchartQuestions;
-            state.currentQuestionId = 'FQ1';
-        }
-        // Calculate total questions dynamically based on the question set
+    function startQuiz() {
+        state.currentQuestionId = 'FQ1';
         state.totalQuestions = Object.keys(state.questionSet).length;
         
         startScreen.classList.add('hidden');
-        choiceScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
         renderQuestion(state.currentQuestionId);
     }
@@ -132,26 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
             state.currentQuestionId = id;
             updateProgress();
             
-            // Show/hide flowchart visualization
-            const flowchartViz = document.getElementById('flowchart-visualization');
-            const currentPath = document.getElementById('current-path');
-            if (state.quizType === 'flowchart') {
-                flowchartViz.classList.remove('hidden');
-                currentPath.classList.remove('hidden');
-                updateFlowchartPosition(id);
-            } else {
-                flowchartViz.classList.add('hidden');
-                currentPath.classList.add('hidden');
-            }
+            // Show flowchart visualization
+            updateFlowchartPosition(id);
             
-            // Add dynamic question numbering for guided path
-            let displayText = question.text;
-            if (state.quizType === 'guided') {
-                const questionNumber = getQuestionNumber(id);
-                displayText = `${questionNumber} ${question.text}`;
-            }
-            
-            questionText.textContent = displayText;
+            questionText.textContent = question.text;
             
             questionHelpContainer.innerHTML = '';
             if (question.help) {
@@ -164,18 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             optionsContainer.innerHTML = '';
-            let options = question.options;
-
-            if (id === 'Q8' || id === 'Q9') {
-                const industry = state.answers['Q6_5']?.answer;
-                if (industry) {
-                    if (id === 'Q8') {
-                        options = industryAssetOptions[industry];
-                    } else { // Q9
-                        options = industryTransactionOptions[industry];
-                    }
-                }
-            }
+            const options = question.options;
 
             options.forEach(option => {
                 const button = document.createElement('button');
@@ -195,20 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const question = state.questionSet[state.currentQuestionId];
         state.answers[state.currentQuestionId] = { answer: value, text: question.text, optionText: question.options.find(o => o.value === value)?.text };
 
-        // For dynamic questions, find the text from the correct options source
-        if (state.currentQuestionId === 'Q8' || state.currentQuestionId === 'Q9') {
-            const industry = state.answers['Q6_5']?.answer;
-            const dynamicOptions = state.currentQuestionId === 'Q8' ? industryAssetOptions[industry] : industryTransactionOptions[industry];
-            state.answers[state.currentQuestionId].optionText = dynamicOptions.find(o => o.value === value)?.text;
-        }
-
         state.history.push(state.currentQuestionId);
         
         let nextQuestionId = null;
         if (typeof question.next === 'function') {
             nextQuestionId = question.next(value, state.answers);
         }
-
+        
         if (nextQuestionId) {
             renderQuestion(nextQuestionId);
         } else {
@@ -230,63 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     function evaluateResult() {
-        // This evaluation is now only for the 'guided' path.
-        // Flowchart path has direct results.
-        if (state.quizType !== 'guided') {
-            // Should not happen if flowchart logic is correct
-            console.error("Evaluation error: Reached end of flowchart without a result.");
-            return;
-        }
-
-        let resultKey;
-        const ans = state.answers;
-        const phase1Answers = {
-            q3: ans['Q3'] ? ans['Q3'].answer : null,
-            q4: ans['Q4'] ? ans['Q4'].answer : null,
-            q5: ans['Q5'] ? ans['Q5'].answer : null
-        };
-
-        if (phase1Answers.q3 === true || phase1Answers.q4 === true || phase1Answers.q5 === true) {
-
-            if (ans['Q6'] && ans['Q6'].answer === true) {
-                resultKey = '純資産価額方式';
-            } else {
-                const employeeSize = ans['Q7'].answer;
-                const assetSize = ans['Q8'].answer;
-                const transactionSize = ans['Q9'].answer;
-
-                const sizes = [employeeSize, assetSize, transactionSize];
-                
-                const isLarge = sizes.filter(s => s === 'Large').length >= 2;
-                const isSmall = sizes.filter(s => s === 'Small').length >= 2;
-
-                let companySize;
-                if (isLarge) {
-                    companySize = 'Large';
-                } else if (isSmall) {
-                    companySize = 'Small';
-                } else {
-                    companySize = 'Medium';
-                }
-
-                if (companySize === 'Large') {
-                    resultKey = '類似業種比準価額方式';
-                } else if (companySize === 'Medium') {
-                    resultKey = '併用方式';
-                } else { // Small
-                    resultKey = '純資産価額方式';
-                }
-            }
-        } else {
-
-            resultKey = '配当還元方式';
-        }
-        
-        showResult(resultKey);
+        // This evaluation is for the flowchart path which has direct results
+        console.error("Evaluation error: Reached end of flowchart without a result.");
     }
-
 
     function showResult(resultKey) {
         const content = resultsContent[resultKey];
@@ -348,13 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
         appContainer.setAttribute('aria-hidden', 'false');
     }
 
-    // Helper function to get question number for guided path
-    function getQuestionNumber(questionId) {
-        const questionOrder = ['Q1', 'Q1_5', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q6_5', 'Q7', 'Q8', 'Q9'];
-        const index = questionOrder.indexOf(questionId);
-        return index !== -1 ? `Q${index + 1}.` : '';
-    }
-
     // Helper function to update flowchart position text
     function updateFlowchartPosition(questionId) {
         const positionText = document.getElementById('flowchart-position');
@@ -363,13 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'FQ2_A': '50%超の場合：あなたの株主区分を確認中',
             'FQ2_B': '30%以上50%以下の場合：あなたの株主区分を確認中',
             'FQ2_C': '30%未満の場合：あなたの株主区分を確認中',
-            'FQ3_A': '同族株主の場合：取得後の議決権割合を確認中',
+            'FQ3': '取得後の議決権割合を確認中',
             'FQ3_B': '同族株主以外の場合：特例的評価方式が適用されます',
-            'FQ4_A': '5%以上の場合：中心的な同族株主の有無を確認中',
-            'FQ4_B': '5%未満の場合：役員の有無を確認中',
-            'FQ5_A': '中心的な同族株主がいる場合：あなたの該当性を確認中',
-            'FQ5_B': '中心的な同族株主がいない場合：役員の有無を確認中',
-            'FQ6': '中心的な同族株主に該当する場合：役員の有無を確認中'
+            'FQ4': '5%未満の場合：中心的な同族株主（株主）の有無を確認中',
+            'FQ5': '中心的な同族株主がいる場合：あなたの該当性を確認中',
+            'FQ6': '役員の有無を確認中'
         };
         
         positionText.textContent = positionMap[questionId] || 'フローチャート進行中';
@@ -432,31 +280,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Step 3: Voting rights after acquisition
-        if (answers['FQ3_A']) {
-            const votingAfter = answers['FQ3_A'].answer;
+        if (answers['FQ3']) {
+            const votingAfter = answers['FQ3'].answer;
             path += '_' + (votingAfter ? '5plus' : '5minus');
         }
         
-        // Step 4: Central family shareholder or officer
-        if (answers['FQ4_A'] || answers['FQ4_B']) {
-            const centralFamily = answers['FQ4_A']?.answer;
-            if (centralFamily !== undefined) {
-                path += '_central_' + (centralFamily ? 'yes' : 'no');
-            } else {
-                // This is also a central family question (FQ4_B)
-                path += '_central_' + (answers['FQ4_B']?.answer ? 'yes' : 'no');
-            }
+        // Step 4: Central family shareholder
+        if (answers['FQ4']) {
+            const centralFamily = answers['FQ4'].answer;
+            path += '_central_' + (centralFamily ? 'yes' : 'no');
         }
         
         // Step 5: Taxpayer central family shareholder
-        if (answers['FQ5_A'] || answers['FQ5_B']) {
-            const taxpayerCentral = answers['FQ5_A']?.answer;
-            if (taxpayerCentral !== undefined) {
-                path += '_' + (taxpayerCentral ? 'yes' : 'no');
-            } else {
-                // This is also a taxpayer central question (FQ5_B)
-                path += '_' + (answers['FQ5_B']?.answer ? 'yes' : 'no');
-            }
+        if (answers['FQ5']) {
+            const taxpayerCentral = answers['FQ5'].answer;
+            path += '_' + (taxpayerCentral ? 'yes' : 'no');
         }
         
         // Step 6: Officer status
@@ -502,23 +340,23 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (answer === 'other') pathSteps.push('同族株主以外');
         }
         
-        if (state.answers['FQ3_A']) {
-            const answer = state.answers['FQ3_A'].answer;
+        if (state.answers['FQ3']) {
+            const answer = state.answers['FQ3'].answer;
             pathSteps.push(answer ? '5%以上' : '5%未満');
         }
         
-        if (state.answers['FQ4_A']) {
-            const answer = state.answers['FQ4_A'].answer;
-            pathSteps.push(answer ? '中心的な同族株主がいる' : '中心的な同族株主がいない');
+        if (state.answers['FQ4']) {
+            const answer = state.answers['FQ4'].answer;
+            pathSteps.push(answer ? '中心的な同族株主（株主）がいる' : '中心的な同族株主（株主）がいない');
         }
         
-        if (state.answers['FQ5_A']) {
-            const answer = state.answers['FQ5_A'].answer;
+        if (state.answers['FQ5']) {
+            const answer = state.answers['FQ5'].answer;
             pathSteps.push(answer ? '中心的な同族株主に該当' : '中心的な同族株主に該当しない');
         }
         
-        if (state.answers['FQ6'] || state.answers['FQ4_B'] || state.answers['FQ5_B']) {
-            const answer = state.answers['FQ6']?.answer || state.answers['FQ4_B']?.answer || state.answers['FQ5_B']?.answer;
+        if (state.answers['FQ6']) {
+            const answer = state.answers['FQ6'].answer;
             pathSteps.push(answer ? '役員である' : '役員でない');
         }
         
@@ -532,9 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Listeners
-    startGuidedBtn.addEventListener('click', showStartScreen);
-    startFlowchartBtn.addEventListener('click', () => startQuiz('flowchart'));
-    startBtn.addEventListener('click', () => startQuiz('guided'));
+    startBtn.addEventListener('click', startQuiz);
     backBtn.addEventListener('click', goBack);
     resetBtn.addEventListener('click', init);
     helpModalClose.addEventListener('click', hideHelp);
