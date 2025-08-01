@@ -134,11 +134,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Show/hide flowchart visualization
             const flowchartViz = document.getElementById('flowchart-visualization');
+            const currentPath = document.getElementById('current-path');
             if (state.quizType === 'flowchart') {
                 flowchartViz.classList.remove('hidden');
+                currentPath.classList.remove('hidden');
                 updateFlowchartPosition(id);
             } else {
                 flowchartViz.classList.add('hidden');
+                currentPath.classList.add('hidden');
             }
             
             // Add dynamic question numbering for guided path
@@ -456,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (pathSteps.length > 0) {
             pathDisplay.innerHTML = pathSteps.map((step, index) => 
-                `<span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 mb-1">${index + 1}. ${step}</span>`
+                `<span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">${index + 1}. ${step}</span>`
             ).join('');
         } else {
             pathDisplay.innerHTML = '<span class="text-slate-500">まだ選択されていません</span>';

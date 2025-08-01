@@ -169,12 +169,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Current Path Display -->
-                        <div id="current-path" class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                            <h4 class="font-semibold text-sm text-blue-800 mb-2">現在の選択経路</h4>
-                            <div id="path-display" class="text-sm text-blue-700"></div>
-                        </div>
                     </div>
                 </div>
                 
@@ -201,6 +195,12 @@
                     <button id="back-btn" class="px-6 py-2 text-slate-600 font-medium rounded-lg hover:bg-slate-100 transition">
                         戻る
                     </button>
+                </div>
+                
+                <!-- Current Path Display (moved to bottom) -->
+                <div id="current-path" class="hidden mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 class="font-semibold text-sm text-blue-800 mb-3">現在の選択経路</h4>
+                    <div id="path-display" class="flex flex-wrap gap-2 text-sm text-blue-700"></div>
                 </div>
             </div>
 
