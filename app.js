@@ -392,8 +392,11 @@ document.addEventListener('DOMContentLoaded', () => {
             option.classList.add('text-slate-600');
         });
         
-        // Highlight current step
-        const currentStep = document.querySelector(`[data-step="${questionId}"]`);
+        // Determine the current path based on answers
+        const currentPath = determineCurrentPath();
+        
+        // Highlight current step based on path
+        const currentStep = document.querySelector(`[data-path="${currentPath}"]`);
         if (currentStep) {
             currentStep.querySelector('div').classList.remove('border-slate-300', 'bg-slate-100');
             currentStep.querySelector('div').classList.add('border-blue-500', 'bg-blue-50');
@@ -401,6 +404,68 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Highlight selected options based on answers
         highlightSelectedOptions();
+    }
+
+    // Helper function to determine current path
+    function determineCurrentPath() {
+        const answers = state.answers;
+        let path = '';
+        
+        // Step 1: Voting rights
+        if (answers['FQ1']) {
+            const votingRights = answers['FQ1'].answer;
+            if (votingRights === 'over_50') path = 'over_50';
+            else if (votingRights === '30_to_50') path = '30_to_50';
+            else if (votingRights === 'under_30') path = 'under_30';
+        }
+        
+        // Step 2: Taxpayer type
+        if (answers['FQ2_A'] || answers['FQ2_B'] || answers['FQ2_C']) {
+            const taxpayerType = answers['FQ2_A']?.answer || answers['FQ2_B']?.answer || answers['FQ2_C']?.answer;
+            if (path === 'over_50') {
+                path += '_' + (taxpayerType === 'family' ? 'family' : 'other');
+            } else if (path === '30_to_50') {
+                path += '_' + (taxpayerType === 'family' ? 'family' : 'other');
+            } else if (path === 'under_30') {
+                path += '_' + (taxpayerType === 'family_etc' ? 'family_etc' : 'other');
+            }
+        }
+        
+        // Step 3: Voting rights after acquisition
+        if (answers['FQ3_A']) {
+            const votingAfter = answers['FQ3_A'].answer;
+            path += '_' + (votingAfter ? '5plus' : '5minus');
+        }
+        
+        // Step 4: Central family shareholder or officer
+        if (answers['FQ4_A'] || answers['FQ4_B']) {
+            const centralFamily = answers['FQ4_A']?.answer;
+            if (centralFamily !== undefined) {
+                path += '_central_' + (centralFamily ? 'yes' : 'no');
+            } else {
+                // This is an officer question (FQ4_B)
+                path += '_officer';
+            }
+        }
+        
+        // Step 5: Taxpayer central family shareholder or officer
+        if (answers['FQ5_A'] || answers['FQ5_B']) {
+            const taxpayerCentral = answers['FQ5_A']?.answer;
+            if (taxpayerCentral !== undefined) {
+                path += '_' + (taxpayerCentral ? 'yes' : 'no');
+            } else {
+                // This is an officer question (FQ5_B)
+                path += '_officer';
+            }
+        }
+        
+        // Step 6: Officer status
+        if (answers['FQ6']) {
+            const officer = answers['FQ6'].answer;
+            path += '_' + (officer ? 'yes' : 'no');
+        }
+        
+        return path;
     }
 
     // Helper function to highlight selected options
