@@ -215,43 +215,54 @@ export const flowchartQuestions = {
         result: '配当還元方式'
     },
     'FQ4_A': { // Path for >=5%
-        text: '同族株主の中に中心的な同族株主がいますか？',
+        text: '同族株主の中に中心的な株主がいますか？',
         help: {
-            title: '中心的な同族株主とは？',
+            title: '中心的な株主とは？',
             text: '同族株主の1人とその親族等の議決権合計が25%以上となる場合の、その株主を指します。'
         },
         options: [
             { text: 'いる', value: true },
             { text: 'いない', value: false }
         ],
-        next: (answer) => answer ? 'FQ5_A' : 'FQ5_B'
+        next: (answer) => answer ? 'FQ5_A' : 'FQ6' // If yes, check if taxpayer is central; if no, go to officer question
     },
     'FQ4_B': { // Path for <5%
-        text: 'あなた（納税義務者）は役員ですか？',
+        text: '同族株主の中に中心的な株主がいますか？',
         help: {
-            title: '役員とは？',
-            text: '会社の経営に直接関与している取締役、監査役などが該当します。'
+            title: '中心的な株主とは？',
+            text: '同族株主の1人とその親族等の議決権合計が25%以上となる場合の、その株主を指します。'
         },
         options: [
-            { text: 'はい', value: true },
-            { text: 'いいえ', value: false }
+            { text: 'いる', value: true },
+            { text: 'いない', value: false }
         ],
-        next: () => null, // Final question
-        result: (answer) => answer ? '原則的評価' : '配当還元方式'
+        next: (answer) => answer ? 'FQ5_B' : 'FQ6' // If yes, check if taxpayer is central; if no, go to officer question
     },
-    'FQ5_A': { // Path for "いる"
-        text: 'あなた自身は、その中心的な同族株主に該当しますか？',
+    'FQ5_A': { // Path for "いる" (>=5%)
+        text: 'あなた自身は、その中心的な株主に該当しますか？',
         help: {
-            title: '中心的な同族株主への該当',
+            title: '中心的な株主への該当',
             text: 'あなた自身とあなたの近親者（配偶者、親子、兄弟姉妹など）の議決権を合計して25%以上になるかをご確認ください。'
         },
         options: [
             { text: 'はい', value: true },
             { text: 'いいえ', value: false }
         ],
-        next: (answer) => answer ? 'FQ6' : 'FQ4_B'
+        next: (answer) => answer ? 'FQ6' : 'FQ6' // Both paths lead to officer question
     },
-    'FQ5_B': { // Path for "いない"
+    'FQ5_B': { // Path for "いる" (<5%)
+        text: 'あなた自身は、その中心的な株主に該当しますか？',
+        help: {
+            title: '中心的な株主への該当',
+            text: 'あなた自身とあなたの近親者（配偶者、親子、兄弟姉妹など）の議決権を合計して25%以上になるかをご確認ください。'
+        },
+        options: [
+            { text: 'はい', value: true },
+            { text: 'いいえ', value: false }
+        ],
+        next: (answer) => answer ? 'FQ6' : 'FQ6' // Both paths lead to officer question
+    },
+    'FQ6': { // Final question for officer status
         text: 'あなた（納税義務者）は役員ですか？',
         help: {
             title: '役員とは？',
@@ -263,19 +274,6 @@ export const flowchartQuestions = {
         ],
         next: () => null,
         result: (answer) => answer ? '原則的評価' : '配当還元方式'
-    },
-    'FQ6': { // Final question for "Principle" path
-        text: 'あなた（納税義務者）は役員ですか？',
-        help: {
-            title: '役員とは？',
-            text: '会社の経営に直接関与している取締役、監査役などが該当します。'
-        },
-        options: [
-            { text: 'はい', value: true },
-            { text: 'いいえ', value: false }
-        ],
-        next: () => null,
-        result: '原則的評価'
     }
 };
 

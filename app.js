@@ -443,19 +443,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (centralFamily !== undefined) {
                 path += '_central_' + (centralFamily ? 'yes' : 'no');
             } else {
-                // This is an officer question (FQ4_B)
-                path += '_officer';
+                // This is also a central family question (FQ4_B)
+                path += '_central_' + (answers['FQ4_B']?.answer ? 'yes' : 'no');
             }
         }
         
-        // Step 5: Taxpayer central family shareholder or officer
+        // Step 5: Taxpayer central family shareholder
         if (answers['FQ5_A'] || answers['FQ5_B']) {
             const taxpayerCentral = answers['FQ5_A']?.answer;
             if (taxpayerCentral !== undefined) {
                 path += '_' + (taxpayerCentral ? 'yes' : 'no');
             } else {
-                // This is an officer question (FQ5_B)
-                path += '_officer';
+                // This is also a taxpayer central question (FQ5_B)
+                path += '_' + (answers['FQ5_B']?.answer ? 'yes' : 'no');
             }
         }
         
